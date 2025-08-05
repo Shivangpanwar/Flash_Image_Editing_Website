@@ -10,5 +10,7 @@ opencv-python==4.8.0.74
 Werkzeug==2.3.6
 setuptools>=42
 wheel
+pip
+
 
 

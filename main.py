@@ -36,17 +36,17 @@ def processImage(filename, operation):
             return name
         case "cpng":
             name = f"{filename.split('.')[0]}.png"
-            newFile = f"{basedir}/static/{filename.split('.')[0]}.png"
+            newFile = f"{basedir}/static/{name}"
             cv2.imwrite(newFile, img)
             return name
         case "cjpeg":
             name = f"{filename.split('.')[0]}.jpeg"
-            newFile = f"{basedir}/static/{filename.split('.')[0]}.jpeg"
+            newFile = f"{basedir}/static/{name}"
             cv2.imwrite(newFile, img)
             return name
         case "cjpg":
             name = f"{filename.split('.')[0]}.jpg"
-            newFile = f"{basedir}/static/{filename.split('.')[0]}.jpg"
+            newFile = f"{basedir}/static/{name}"
             cv2.imwrite(newFile, img)
             return name
 
@@ -62,31 +62,26 @@ def home():
 def edit():
     operation = request.form.get("operation")
     if request.method == "POST":
-        # check if the post request has the file part
         if "file" not in request.files:
             flash("No file Submission")
             return render_template("index.html")
         file = request.files["file"]
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
         if file.filename == "":
             flash("No selected file")
             return render_template("index.html")
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(basedir, app.config["UPLOAD_FOLDER"], filename))
-            # Image processing
             processedImg = processImage(filename, operation)
-
-            # flashing success message
             flash(
-                f"Your image has been processed and is available <a href='/static/{processedImg}' target ='_blank'> here</a> "
+                f"Your image has been processed and is available <a href='/static/{processedImg}' target ='_blank'> here</a> ",
+                "success"
             )
             return render_template("index.html")
-
     return render_template("index.html")
 
 
-# runserver
-app.run(debug=True)
-# app.run(debug=True, port =5001)
+# runserver - updated for Render deployment
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
